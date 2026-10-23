@@ -1,17 +1,24 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
-import { Search } from "lucide-react";
-import { artworks, filterArtworks } from "@/lib/artworks";
-import { Masonry } from "@/components/Gallery";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect, useRef, useState } from "react";
+import { getArtworks, series, characters, tags, type Filters } from "@/data";
+import { MasonryGrid } from "@/components/art";
+import { Chip, EmptyState, PageHero, SkeletonTile } from "@/components/kit";
+import { SearchPill } from "@/components/SearchPill";
+
+type GallerySearch = { q?: string; type?: string; series?: string; character?: string; tag?: string; orientation?: string; resolution?: string; sort?: string };
+const str = (v: unknown) => (typeof v === "string" && v ? v : undefined);
 
 export const Route = createFileRoute("/gallery")({
-  validateSearch: (s: Record<string, unknown>): { q?: string } => (typeof s["q"] === "string" ? { q: s["q"] } : {}),
+  validateSearch: (s: Record<string, unknown>): GallerySearch => ({
+    q: str(s["q"]), type: str(s["type"]), series: str(s["series"]), character: str(s["character"]),
+    tag: str(s["tag"]), orientation: str(s["orientation"]), resolution: str(s["resolution"]), sort: str(s["sort"]),
+  }),
   head: () => ({
     meta: [
       { title: "Gallery — Artsstory" },
-      { name: "description", content: "Browse and search the full Artsstory collection of anime illustrations and videos." },
+      { name: "description", content: "Explore the full Artsstory collection: filter anime art by series, character, tag, orientation and resolution." },
       { property: "og:title", content: "Gallery — Artsstory" },
-      { property: "og:description", content: "Search anime art by series, character and tag." },
+      { property: "og:description", content: "Explore and filter curated anime art." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -19,31 +26,96 @@ export const Route = createFileRoute("/gallery")({
   component: GalleryPage,
 });
 
-const kinds = ["all", "image", "video"] as const;
+const PAGE = 12;
+
+export function toFilters(s: GallerySearch): Filters {
+  const pick = <T extends string>(v: string | undefined, ok: readonly T[]) => (ok.includes(v as T) ? (v as T) : undefined);
+  return {
+    q: s.q, series: s.series, character: s.character, tag: s.tag,
+    type: pick(s.type, ["image", "video"] as const),
+    orientation: pick(s.orientation, ["portrait", "landscape", "square"] as const),
+    resolution: pick(s.resolution, ["4K", "HD"] as const),
+    sort: pick(s.sort, ["latest", "popular", "liked"] as const),
+  };
+}
+
+function Select({ label, value, onChange, options }: { label: string; value?: string; onChange: (v?: string) => void; options: { value: string; label: string }[] }) {
+  return (
+    <label className="relative">
+      <span className="sr-only">{label}</span>
+      <select value={value ?? ""} onChange={(e) => onChange(e.target.value || undefined)} className={`chip appearance-none pr-8 ${value ? "chip-active" : ""}`}>
+        <option value="">{label}</option>
+        {options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+      </select>
+      <span aria-hidden className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs">▾</span>
+    </label>
+  );
+}
 
 function GalleryPage() {
-  const { q: initial } = Route.useSearch();
-  const [q, setQ] = useState(initial ?? "");
-  const [kind, setKind] = useState<(typeof kinds)[number]>("all");
-  const items = filterArtworks(artworks, q, kind);
+  const search = Route.useSearch();
+  const navigate = useNavigate({ from: "/gallery" });
+  const filters = toFilters(search);
+  const set = (patch: Partial<GallerySearch>) => navigate({ search: (prev) => ({ ...prev, ...patch }), replace: true, resetScroll: false });
+
+  const [limit, setLimit] = useState(PAGE);
+  const [loading, setLoading] = useState(false);
+  const key = JSON.stringify(filters);
+  useEffect(() => setLimit(PAGE), [key]);
+  const { items, nextCursor, total } = getArtworks({ cursor: 0, limit, filters });
+
+  const sentinel = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = sentinel.current;
+    if (!el || nextCursor === null) return;
+    const io = new IntersectionObserver(([e]) => {
+      if (e?.isIntersecting && !loading) {
+        setLoading(true);
+        setTimeout(() => { setLimit((l) => l + PAGE); setLoading(false); }, 500);
+      }
+    }, { rootMargin: "400px" });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [nextCursor, loading]);
+
+  const active = Object.entries(search).filter(([k, v]) => v && k !== "sort").length;
+
   return (
-    <main className="mx-auto max-w-[1440px] px-4 pt-28 md:px-8">
-      <h1 className="text-5xl md:text-7xl">Our Magical <em className="text-primary">Gallery</em></h1>
-      <div className="mt-8 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-        <div className="flex gap-2">
-          {kinds.map((k) => (
-            <button key={k} onClick={() => setKind(k)} className={`min-h-11 rounded-full px-5 text-sm capitalize transition-colors ${kind === k ? "bg-primary text-primary-foreground" : "border bg-card hover:bg-primary-soft"}`}>
-              {k === "all" ? "All" : k + "s"}
-            </button>
-          ))}
+    <main>
+      <PageHero eyebrow={`${total} artworks`} title="Our Magical" accent="Gallery">Filter by world, face or feeling. Everything here is hand-picked and credited.</PageHero>
+      <div className="container-page">
+        <div className="sticky top-16 z-30 -mx-4 bg-background/85 px-4 py-4 backdrop-blur md:-mx-8 md:px-8">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div className="no-scrollbar flex gap-2 overflow-x-auto">
+              <Chip active={!filters.type} onClick={() => set({ type: undefined })}>All</Chip>
+              <Chip active={filters.type === "image"} onClick={() => set({ type: "image" })}>Images</Chip>
+              <Chip active={filters.type === "video"} onClick={() => set({ type: "video" })}>Videos</Chip>
+            </div>
+            <SearchPill key={search.q ?? ""} initial={search.q ?? ""} className="lg:w-80" onQuery={(q) => set({ q: q || undefined })} />
+          </div>
+          <div className="no-scrollbar mt-3 flex gap-2 overflow-x-auto pb-1">
+            <Select label="Series" value={search.series} onChange={(v) => set({ series: v })} options={series.map((s) => ({ value: s.slug, label: s.name }))} />
+            <Select label="Character" value={search.character} onChange={(v) => set({ character: v })} options={characters.map((c) => ({ value: c.slug, label: c.name }))} />
+            <Select label="Tag" value={search.tag} onChange={(v) => set({ tag: v })} options={tags.map((t) => ({ value: t.slug, label: `#${t.name}` }))} />
+            <Select label="Orientation" value={search.orientation} onChange={(v) => set({ orientation: v })} options={[{ value: "portrait", label: "Portrait" }, { value: "landscape", label: "Landscape" }, { value: "square", label: "Square" }]} />
+            <Select label="Resolution" value={search.resolution} onChange={(v) => set({ resolution: v })} options={[{ value: "4K", label: "4K" }, { value: "HD", label: "HD" }]} />
+            <Select label="Sort: Latest" value={search.sort} onChange={(v) => set({ sort: v })} options={[{ value: "popular", label: "Popular" }, { value: "liked", label: "Most liked" }, { value: "latest", label: "Latest" }]} />
+            {active > 0 && <button className="chip text-primary" onClick={() => navigate({ search: {}, replace: true })}>Clear ({active})</button>}
+          </div>
         </div>
-        <label className="flex min-h-11 items-center gap-2 rounded-full border bg-card px-4 md:w-80">
-          <Search className="h-4 w-4 text-muted-foreground" />
-          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search series, character, tag…" className="w-full bg-transparent text-sm outline-none" />
-        </label>
-      </div>
-      <div className="mt-8">
-        {items.length ? <Masonry items={items} /> : <p className="py-20 text-center text-muted-foreground">No artworks match "{q}".</p>}
+
+        <div className="mt-6">
+          {items.length === 0 ? (
+            <EmptyState title="No magic found">Try removing a filter or searching for something else.<div className="mt-4"><button className="btn-ghost" onClick={() => navigate({ search: {} })}>Reset filters</button></div></EmptyState>
+          ) : (
+            <>
+              <MasonryGrid items={items} />
+              {loading && <div className="columns-2 gap-3 md:columns-3 md:gap-5 xl:columns-4">{[0.8, 1.2, 1, 0.7].map((r, i) => <SkeletonTile key={i} ratio={r} />)}</div>}
+              <div ref={sentinel} className="h-4" />
+              {nextCursor === null && total > PAGE && <p className="font-script py-10 text-center text-3xl text-primary">You've seen it all ✿</p>}
+            </>
+          )}
+        </div>
       </div>
     </main>
   );
