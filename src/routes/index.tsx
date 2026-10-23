@@ -26,6 +26,7 @@ const ease = [0.22, 1, 0.36, 1] as const;
 function Index() {
   const [w, setW] = useState(0);
   const [s, setS] = useState(0);
+  const cur = slides[s]!;
   const { scrollY } = useScroll();
   const y = useTransform(scrollY, [0, 600], [0, 80]);
   useEffect(() => {
@@ -70,9 +71,9 @@ function Index() {
           <motion.div style={{ y }} className="relative mx-auto aspect-[4/5] w-full max-w-md">
             <AnimatePresence>
               <motion.img
-                key={slides[s].id}
-                src={slides[s].src}
-                alt={slides[s].title}
+                key={cur.id}
+                src={cur.src}
+                alt={cur.title}
                 initial={{ opacity: 0, scale: 1.06 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0 }}
@@ -80,7 +81,7 @@ function Index() {
                 className="absolute inset-0 h-full w-full rounded-[2rem] object-cover shadow-soft"
               />
             </AnimatePresence>
-            <p className="font-script absolute -bottom-6 -left-4 rotate-[-6deg] text-3xl text-primary">"{slides[s].title}"</p>
+            <p className="font-script absolute -bottom-6 -left-4 rotate-[-6deg] text-3xl text-primary">"{cur.title}"</p>
             <div className="absolute -right-2 top-1/2 flex -translate-y-1/2 flex-col gap-3 md:-right-10">
               {slides.map((sl, i) => (
                 <button key={sl.id} onClick={() => setS(i)} aria-label={`Slide ${i + 1}`} className={`text-xs tabular-nums transition-colors ${i === s ? "text-primary font-bold" : "text-muted-foreground"}`}>
