@@ -5,7 +5,7 @@ import { artworks, filterArtworks } from "@/lib/artworks";
 import { Masonry } from "@/components/Gallery";
 
 export const Route = createFileRoute("/gallery")({
-  validateSearch: (s: Record<string, unknown>) => ({ q: typeof s.q === "string" ? s.q : undefined }),
+  validateSearch: (s: Record<string, unknown>): { q?: string } => (typeof s["q"] === "string" ? { q: s["q"] } : {}),
   head: () => ({
     meta: [
       { title: "Gallery — Artsstory" },

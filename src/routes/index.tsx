@@ -20,7 +20,7 @@ export const Route = createFileRoute("/")({
 });
 
 const words = ["Magical", "Dreamy", "Colorful"];
-const slides = [artworks[0], artworks[2], artworks[3], artworks[5]];
+const slides = [0, 2, 3, 5].map((i) => artworks[i]!);
 const ease = [0.22, 1, 0.36, 1] as const;
 
 function Index() {
