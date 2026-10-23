@@ -11,7 +11,17 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as CharactersRouteImport } from './routes/characters'
 import { Route as GalleryRouteImport } from './routes/gallery'
+import { Route as SavedRouteImport } from './routes/saved'
+import { Route as SearchRouteImport } from './routes/search'
+import { Route as ArtSlugRouteImport } from './routes/art.$slug'
+import { Route as CharacterSlugRouteImport } from './routes/character.$slug'
+import { Route as CollectionsIndexRouteImport } from './routes/collections.index'
+import { Route as CollectionsSlugRouteImport } from './routes/collections.$slug'
+import { Route as SeriesIndexRouteImport } from './routes/series.index'
+import { Route as SeriesSlugRouteImport } from './routes/series.$slug'
+import { Route as TagSlugRouteImport } from './routes/tag.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -23,40 +33,170 @@ const AboutRoute = AboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CharactersRoute = CharactersRouteImport.update({
+  id: '/characters',
+  path: '/characters',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GalleryRoute = GalleryRouteImport.update({
   id: '/gallery',
   path: '/gallery',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SavedRoute = SavedRouteImport.update({
+  id: '/saved',
+  path: '/saved',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SearchRoute = SearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ArtSlugRoute = ArtSlugRouteImport.update({
+  id: '/art/$slug',
+  path: '/art/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CharacterSlugRoute = CharacterSlugRouteImport.update({
+  id: '/character/$slug',
+  path: '/character/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CollectionsIndexRoute = CollectionsIndexRouteImport.update({
+  id: '/collections/',
+  path: '/collections/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CollectionsSlugRoute = CollectionsSlugRouteImport.update({
+  id: '/collections/$slug',
+  path: '/collections/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SeriesIndexRoute = SeriesIndexRouteImport.update({
+  id: '/series/',
+  path: '/series/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SeriesSlugRoute = SeriesSlugRouteImport.update({
+  id: '/series/$slug',
+  path: '/series/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TagSlugRoute = TagSlugRouteImport.update({
+  id: '/tag/$slug',
+  path: '/tag/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/characters': typeof CharactersRoute
   '/gallery': typeof GalleryRoute
+  '/saved': typeof SavedRoute
+  '/search': typeof SearchRoute
+  '/art/$slug': typeof ArtSlugRoute
+  '/character/$slug': typeof CharacterSlugRoute
+  '/collections/$slug': typeof CollectionsSlugRoute
+  '/series/$slug': typeof SeriesSlugRoute
+  '/tag/$slug': typeof TagSlugRoute
+  '/collections/': typeof CollectionsIndexRoute
+  '/series/': typeof SeriesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/characters': typeof CharactersRoute
   '/gallery': typeof GalleryRoute
+  '/saved': typeof SavedRoute
+  '/search': typeof SearchRoute
+  '/art/$slug': typeof ArtSlugRoute
+  '/character/$slug': typeof CharacterSlugRoute
+  '/collections/$slug': typeof CollectionsSlugRoute
+  '/series/$slug': typeof SeriesSlugRoute
+  '/tag/$slug': typeof TagSlugRoute
+  '/collections': typeof CollectionsIndexRoute
+  '/series': typeof SeriesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/characters': typeof CharactersRoute
   '/gallery': typeof GalleryRoute
+  '/saved': typeof SavedRoute
+  '/search': typeof SearchRoute
+  '/art/$slug': typeof ArtSlugRoute
+  '/character/$slug': typeof CharacterSlugRoute
+  '/collections/$slug': typeof CollectionsSlugRoute
+  '/series/$slug': typeof SeriesSlugRoute
+  '/tag/$slug': typeof TagSlugRoute
+  '/collections/': typeof CollectionsIndexRoute
+  '/series/': typeof SeriesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/gallery'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/characters'
+    | '/gallery'
+    | '/saved'
+    | '/search'
+    | '/art/$slug'
+    | '/character/$slug'
+    | '/collections/$slug'
+    | '/series/$slug'
+    | '/tag/$slug'
+    | '/collections/'
+    | '/series/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/gallery'
-  id: '__root__' | '/' | '/about' | '/gallery'
+  to:
+    | '/'
+    | '/about'
+    | '/characters'
+    | '/gallery'
+    | '/saved'
+    | '/search'
+    | '/art/$slug'
+    | '/character/$slug'
+    | '/collections/$slug'
+    | '/series/$slug'
+    | '/tag/$slug'
+    | '/collections'
+    | '/series'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/characters'
+    | '/gallery'
+    | '/saved'
+    | '/search'
+    | '/art/$slug'
+    | '/character/$slug'
+    | '/collections/$slug'
+    | '/series/$slug'
+    | '/tag/$slug'
+    | '/collections/'
+    | '/series/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  CharactersRoute: typeof CharactersRoute
   GalleryRoute: typeof GalleryRoute
+  SavedRoute: typeof SavedRoute
+  SearchRoute: typeof SearchRoute
+  ArtSlugRoute: typeof ArtSlugRoute
+  CharacterSlugRoute: typeof CharacterSlugRoute
+  CollectionsSlugRoute: typeof CollectionsSlugRoute
+  SeriesSlugRoute: typeof SeriesSlugRoute
+  TagSlugRoute: typeof TagSlugRoute
+  CollectionsIndexRoute: typeof CollectionsIndexRoute
+  SeriesIndexRoute: typeof SeriesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -75,11 +215,81 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/characters': {
+      id: '/characters'
+      path: '/characters'
+      fullPath: '/characters'
+      preLoaderRoute: typeof CharactersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/gallery': {
       id: '/gallery'
       path: '/gallery'
       fullPath: '/gallery'
       preLoaderRoute: typeof GalleryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/saved': {
+      id: '/saved'
+      path: '/saved'
+      fullPath: '/saved'
+      preLoaderRoute: typeof SavedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/art/$slug': {
+      id: '/art/$slug'
+      path: '/art/$slug'
+      fullPath: '/art/$slug'
+      preLoaderRoute: typeof ArtSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/character/$slug': {
+      id: '/character/$slug'
+      path: '/character/$slug'
+      fullPath: '/character/$slug'
+      preLoaderRoute: typeof CharacterSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/collections/': {
+      id: '/collections/'
+      path: '/collections'
+      fullPath: '/collections/'
+      preLoaderRoute: typeof CollectionsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/collections/$slug': {
+      id: '/collections/$slug'
+      path: '/collections/$slug'
+      fullPath: '/collections/$slug'
+      preLoaderRoute: typeof CollectionsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/series/': {
+      id: '/series/'
+      path: '/series'
+      fullPath: '/series/'
+      preLoaderRoute: typeof SeriesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/series/$slug': {
+      id: '/series/$slug'
+      path: '/series/$slug'
+      fullPath: '/series/$slug'
+      preLoaderRoute: typeof SeriesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tag/$slug': {
+      id: '/tag/$slug'
+      path: '/tag/$slug'
+      fullPath: '/tag/$slug'
+      preLoaderRoute: typeof TagSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -88,7 +298,17 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  CharactersRoute: CharactersRoute,
   GalleryRoute: GalleryRoute,
+  SavedRoute: SavedRoute,
+  SearchRoute: SearchRoute,
+  ArtSlugRoute: ArtSlugRoute,
+  CharacterSlugRoute: CharacterSlugRoute,
+  CollectionsSlugRoute: CollectionsSlugRoute,
+  SeriesSlugRoute: SeriesSlugRoute,
+  TagSlugRoute: TagSlugRoute,
+  CollectionsIndexRoute: CollectionsIndexRoute,
+  SeriesIndexRoute: SeriesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
