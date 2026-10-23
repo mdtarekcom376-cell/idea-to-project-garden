@@ -26,7 +26,7 @@ export function SectionHeading({ eyebrow, title, accent, action, className }: { 
   );
 }
 
-export function PageHero({ eyebrow, title, accent, children, image }: { eyebrow?: string; title: string; accent?: string; children?: ReactNode; image?: string }) {
+export function PageHero({ eyebrow, title, accent, children, image }: { eyebrow?: string; title: string; accent?: string; children?: ReactNode; image?: string | undefined }) {
   return (
     <section className="bg-hero relative overflow-hidden pb-12 pt-28 md:pb-16 md:pt-36">
       <div className="aurora pointer-events-none absolute inset-0" />

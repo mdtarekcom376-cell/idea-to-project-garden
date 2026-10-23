@@ -108,7 +108,7 @@ export function NewsletterForm() {
       className="flex w-full max-w-md gap-2"
       onSubmit={(e) => {
         e.preventDefault();
-        if (!emailSchema.safeParse(email).success) return toast.error("Please enter a valid email");
+        if (!emailSchema.safeParse(email).success) { toast.error("Please enter a valid email"); return; }
         setEmail(""); toast.success("You're subscribed — welcome to the magic ✿");
       }}
     >
