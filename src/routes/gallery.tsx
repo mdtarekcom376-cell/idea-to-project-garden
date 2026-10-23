@@ -5,7 +5,8 @@ import { MasonryGrid } from "@/components/art";
 import { Chip, EmptyState, PageHero, SkeletonTile } from "@/components/kit";
 import { SearchPill } from "@/components/SearchPill";
 
-type GallerySearch = { q?: string; type?: string; series?: string; character?: string; tag?: string; orientation?: string; resolution?: string; sort?: string };
+type O = string | undefined;
+type GallerySearch = { q?: O; type?: O; series?: O; character?: O; tag?: O; orientation?: O; resolution?: O; sort?: O };
 const str = (v: unknown) => (typeof v === "string" && v ? v : undefined);
 
 export const Route = createFileRoute("/gallery")({
@@ -39,7 +40,7 @@ export function toFilters(s: GallerySearch): Filters {
   };
 }
 
-function Select({ label, value, onChange, options }: { label: string; value?: string; onChange: (v?: string) => void; options: { value: string; label: string }[] }) {
+function Select({ label, value, onChange, options }: { label: string; value?: string | undefined; onChange: (v?: string) => void; options: { value: string; label: string }[] }) {
   return (
     <label className="relative">
       <span className="sr-only">{label}</span>

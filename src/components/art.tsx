@@ -129,7 +129,7 @@ export function ZoomImage({ a, layout = true }: { a: Artwork; layout?: boolean }
   return (
     <div className="relative flex h-full w-full items-center justify-center overflow-hidden">
       <motion.img
-        layoutId={layout ? `art-${a.id}` : undefined} src={a.src} alt={a.title}
+        {...(layout ? { layoutId: `art-${a.id}` } : {})} src={a.src} alt={a.title}
         animate={{ scale: zoom ? 2 : 1 }} transition={{ ease, duration: 0.5 }}
         drag={zoom} dragConstraints={{ left: -300, right: 300, top: -300, bottom: 300 }}
         onDoubleClick={() => setZoom((z) => !z)}

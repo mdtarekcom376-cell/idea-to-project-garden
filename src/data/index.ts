@@ -137,7 +137,7 @@ export const collections: Collection[] = [
 
 /* ---------- Data access (swap these for real API calls later) ---------- */
 export type Sort = "latest" | "popular" | "liked";
-export type Filters = { q?: string; type?: MediaType | "all"; series?: string; character?: string; tag?: string; orientation?: "portrait" | "landscape" | "square"; resolution?: "4K" | "HD"; sort?: Sort };
+export type Filters = { q?: string | undefined; type?: MediaType | "all" | undefined; series?: string | undefined; character?: string | undefined; tag?: string | undefined; orientation?: "portrait" | "landscape" | "square" | undefined; resolution?: "4K" | "HD" | undefined; sort?: Sort | undefined };
 
 export const resolutionOf = (a: Artwork) => (a.width >= 1024 ? "4K" : "HD");
 export const orientationOf = (a: Artwork) => (a.aspect > 1.1 ? "landscape" : a.aspect < 0.9 ? "portrait" : "square");
